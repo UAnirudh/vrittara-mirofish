@@ -2,7 +2,7 @@ FROM python:3.11
 
 # 安装 Node.js （满足 >=18）及必要工具
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends nodejs npm \
+  && apt-get install -y --no-install-recommends nodejs npm nginx \
   && rm -rf /var/lib/apt/lists/*
 
 # 从 uv 官方镜像复制 uv
@@ -23,7 +23,12 @@ RUN npm ci \
 # 复制项目源码
 COPY . .
 
+RUN VITE_BASE_PATH=/simulation/ VITE_API_BASE_URL=/simulation npm run build \
+  && mkdir -p /app/www/simulation \
+  && cp -a frontend/dist/. /app/www/simulation/
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 3000 5001
 
-# 同时启动前后端（开发模式）
-CMD ["npm", "run", "dev"]
+# Run the private API alongside the built frontend.
+CMD ["npm", "run", "start"]
