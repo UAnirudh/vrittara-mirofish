@@ -18,6 +18,9 @@ export default defineConfig({
     host: '0.0.0.0',
     port: Number(process.env.PORT || 3000),
     open: false,
+    // The browser reaches Vite through Vrittara's authenticated gateway. Vite
+    // validates that private Railway host before accepting the forwarded request.
+    allowedHosts: ['mirofish-secure.railway.internal'],
     proxy: {
       '/api': {
         target: 'http://localhost:5001',
