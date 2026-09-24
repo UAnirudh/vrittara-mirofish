@@ -4,6 +4,9 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Vrittara mounts this UI behind its authenticated /simulation route. Keeping
+  // the base configurable lets the standalone upstream app keep working too.
+  base: process.env.VITE_BASE_PATH || '/',
   plugins: [vue()],
   resolve: {
     alias: {
@@ -12,8 +15,9 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3000,
-    open: true,
+    host: '0.0.0.0',
+    port: Number(process.env.PORT || 3000),
+    open: false,
     proxy: {
       '/api': {
         target: 'http://localhost:5001',
